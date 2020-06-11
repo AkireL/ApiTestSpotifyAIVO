@@ -3,7 +3,7 @@ require '../../vendor/autoload.php';
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-use App\Bussines\AlbumsByArtist;
+use App\Bussines\ManagerAlbumsArtist;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
@@ -17,8 +17,10 @@ $app->get('/api/v1/albums', function (Request $request, Response $response) {
             throw new Exception('Parameter "q" is required', 400);
         }
         $nameArtist = $request->getQueryParams()['q'];
-        $bussines = new AlbumsByArtist();
-        $data = $bussines->execute($nameArtist);
+
+        $usecase = new ManagerAlbumsArtist();
+        $data = $usecase($nameArtist);
+
         return $response->withJson( $data );
     }catch(Exception $ex){
         $code = (int)$ex->getCode();

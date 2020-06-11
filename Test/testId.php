@@ -1,7 +1,11 @@
 <?php
 require "../vendor/autoload.php";
 use App\Services\AuthSpotifyService;
-
+/**
+ * Test Log In
+ * @author Erika Leonor Basurto Munguia <iamdleonor@gmail.com>
+ * @version 1.0.0
+ */
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 $dotenv->required(['SPOTIFY_CLIENT_ID', 'SPOTIFY_CLIENT_SECRET']);

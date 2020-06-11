@@ -1,8 +1,13 @@
 <?php
 namespace App\Services;
 use GuzzleHttp\Client;
-
-class AuthSpotifyService{
+use App\Services\IAuthService;
+/**
+ * Log In API Spotify
+ * @author Erika Leonor Basurto Munguia <iamdleonor@gmail.com>
+ * @version 1.0.0
+ */
+class AuthSpotifyService implements IAuthService{
     private $client = null;
     private $user = null;
     private $pass = null;

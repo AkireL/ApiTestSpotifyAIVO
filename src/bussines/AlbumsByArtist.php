@@ -1,31 +1,29 @@
 <?php
 namespace App\Bussines;
-use App\Services\AuthSpotifyService;
-use App\Services\AlbumSpotifyService;
-use App\Services\ArtistSpotifyService;
 
+use App\Services\IAlbumService;
+use App\Services\IArtistService;
 use \Exception;
 
+/**
+ * Get Albums by artist
+ * @author Erika Leonor Basurto Munguia <iamdleonor@gmail.com>
+ * @version 1.0.0
+ */
+
 class AlbumsByArtist
-{
-    private $authService = null;
+{    
+    private $albumService = null;
+    private $artistService = null;
     
-    public function __construct(){
-        $this->authService = new AuthSpotifyService($_ENV['SPOTIFY_CLIENT_ID'], $_ENV['SPOTIFY_CLIENT_SECRET']);
+    public function __construct(IArtistService $artistService, IAlbumService $albumService){
+        $this->albumService = $albumService;
+        $this->artistService = $artistService;
     }
 
     public function execute(string $artistName){
-        # 1. Log In: get Token
-        $responseToken = $this->authService->getToken();
-
-        if($responseToken['statusCode'] != 200){
-            throw new Exception($responseToken['data']->error_description);
-        }
-        $token = $responseToken['data']->access_token;
-
-        # 2. Search Artist's Id
-        $artistService = new ArtistSpotifyService($token);
-        $responseArtist = $artistService->SearchArtist($artistName);
+        # Search Artist's Id
+        $responseArtist = $this->artistService->SearchArtist($artistName);
         if($responseArtist["statusCode"] != 200){
             throw new Exception($responseArtist['data']->error_description);
         }
@@ -35,9 +33,8 @@ class AlbumsByArtist
         $artist = $responseArtist["data"]->artists->items[0];
         $IdArtist = $artist->id;
 
-        # 3. Search Artist's Albums
-        $albumService = new AlbumSpotifyService($token);
-        $responseAlbums = $albumService->SearchArtistAlbums($IdArtist);
+        # Search Artist's Albums
+        $responseAlbums = $this->albumService->SearchAlbumsByArtist($IdArtist);
         if($responseAlbums["statusCode"] != 200){
             throw new Exception($responseAlbums['data']->error->message, $responseAlbums['data']->error->status );
         }
@@ -54,7 +51,7 @@ class AlbumsByArtist
                 ]
             ];
         },
+
         $responseAlbums["data"]->items);
     }
-    
 }

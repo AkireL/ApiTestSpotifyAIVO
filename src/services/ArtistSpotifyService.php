@@ -1,7 +1,14 @@
 <?php
 namespace App\Services;
 use GuzzleHttp\Client;
-class ArtistSpotifyService
+use App\Services\IArtistService;
+
+/**
+ * API Spotify Operations with Artist
+ * @author Erika Leonor Basurto Munguia <iamdleonor@gmail.com>
+ * @version 1.0.0
+ */
+class ArtistSpotifyService implements IArtistService
 {
     private $client = null;
     private $token = null;
@@ -10,7 +17,7 @@ class ArtistSpotifyService
         $this->token = $token;
     }
     
-    public function SearchArtist(string $ArtistName) {
+    public function SearchArtist(string $ArtistName)  {
         $response = $this->client->request('get', 'https://api.spotify.com/v1/search', [
             'headers' => ["Authorization" => "Bearer {$this->token}"],
             "query" => [
