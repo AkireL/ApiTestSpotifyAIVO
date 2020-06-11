@@ -1,6 +1,6 @@
 <?php
 require "../vendor/autoload.php";
-require "../src/services/AuthSpotifyService.php";
+use App\Services\AuthSpotifyService;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();

@@ -1,6 +1,6 @@
 <?php
 require "../vendor/autoload.php";
-require "../src/bussines/AlbumsByArtist.php";
+use App\Bussines\AlbumsByArtist;
 
 $a = new AlbumsByArtist();
 $response = $a->execute("codplay");

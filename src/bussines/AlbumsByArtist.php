@@ -1,7 +1,10 @@
 <?php
-require __DIR__ . "/../services/AuthSpotifyService.php";
-require __DIR__ . "/../services/AlbumSpotifyService.php";
-require __DIR__ . "/../services/ArtistSpotifyService.php";
+namespace App\Bussines;
+use App\Services\AuthSpotifyService;
+use App\Services\AlbumSpotifyService;
+use App\Services\ArtistSpotifyService;
+
+use \Exception;
 
 class AlbumsByArtist
 {
@@ -26,6 +29,9 @@ class AlbumsByArtist
         if($responseArtist["statusCode"] != 200){
             throw new Exception($responseArtist['data']->error_description);
         }
+        if(Count($responseArtist["data"]->artists->items) <= 0){
+            throw new Exception("Artist not found", 404);
+        }
         $artist = $responseArtist["data"]->artists->items[0];
         $IdArtist = $artist->id;
 
@@ -33,7 +39,7 @@ class AlbumsByArtist
         $albumService = new AlbumSpotifyService($token);
         $responseAlbums = $albumService->SearchArtistAlbums($IdArtist);
         if($responseAlbums["statusCode"] != 200){
-            throw new Exception($responseAlbums['data']->error_description);
+            throw new Exception($responseAlbums['data']->error->message, $responseAlbums['data']->error->status );
         }
         
         return array_map(function($row){

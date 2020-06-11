@@ -1,6 +1,6 @@
 <?php
 require "../vendor/autoload.php";
-require "../src/services/AlbumSpotifyService.php";
+use App\Services\AlbumSpotifyService;
 
 $token = "<jwt>";
 $n = new AlbumSpotifyService($token);

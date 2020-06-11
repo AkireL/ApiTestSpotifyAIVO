@@ -1,9 +1,9 @@
 <?php
+require '../../vendor/autoload.php';
+
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-
-require '../../vendor/autoload.php';
-require '../bussines/AlbumsByArtist.php';
+use App\Bussines\AlbumsByArtist;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
@@ -12,10 +12,24 @@ $dotenv->required(['SPOTIFY_CLIENT_ID', 'SPOTIFY_CLIENT_SECRET']);
 $app = new \Slim\App;
 
 $app->get('/api/v1/albums', function (Request $request, Response $response) {
-    $nameArtist = $request->getQueryParams()['q'];
-    $bussines = new AlbumsByArtist();
-    $data = $bussines->execute($nameArtist);
-    return $response->withJson( $data );
+    try{
+        if(!isset($request->getQueryParams()['q'])){
+            throw new Exception('Parameter "q" is required', 400);
+        }
+        $nameArtist = $request->getQueryParams()['q'];
+        $bussines = new AlbumsByArtist();
+        $data = $bussines->execute($nameArtist);
+        return $response->withJson( $data );
+    }catch(Exception $ex){
+        $code = (int)$ex->getCode();
+
+        if($code < 400 || $code > 503){
+            $code = 500;
+        }
+
+        return $response->withJson(["error"=> $ex->getMessage(), "code" => $ex->getCode()], $code);
+    }
+    
 });
 
 
